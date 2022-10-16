@@ -31,11 +31,47 @@ for i in range (4):
     myInputRow[i] = float (input ('Input the data point:'))
 ```
 
-### 3: Kickstarting the knn algorithm process
-```py
-print(myInputRow)
-predict = predict( dataset, myInputRow, 13)
+### 3: Knn process works by calculating the euclidean distance between any two rows
+Here, it will be used to calculate the distance between the input sample row and each of the different rows in the given dataset respectively.
+```py 
+def eucl_dist(row1, row2):
+    distance = 0.0
+    for i in range (len(row1)-1): # -1 because it does not want label column (Iris variety)
+        distance += (row1[i]-row2[i])**2
+    return sqrt (distance)
 ```
 
+### 4: It calculates the k nearest neighbours next
+It calculates the k nearest neighbours next of the input sample by comparing and sorting its euclidean distance to each row of the available dataset.
+Here num variable takes the value of k (k - nearest neighbours)
+```py
+def get_neighbours (dataset, myInputRow, num):
+    distan = list()
+    for j in range(dataset.shape[0]):
+        dist = eucl_dist(dataset.iloc[j], myInputRow)
+        distan.append((dataset.iloc[j], dist))
+    distan.sort(key= lambda n : n [1])
 
+    neighbours = list()
+    for i in range (num):
+        neighbours.append(distan[i][0])
+    return neighbours
+```
+### 5: It gives the predicted value of Iris variety as per the algorithm
+It selects the k nearest neighbours to the sample row and among them, selects the maximum occuring parameter/variety and returns it.
+```py 
+def predict (dataset, myInputRow, num):
+    neighbours = get_neighbours (dataset, myInputRow, num)
+    output = [i[-1] for i  in neighbours]
+    prediction = max(set (output), key = output.count)
+    return prediction 
+```
 
+### 6: Kickstarting the knn algorithm process
+```py
+print(myInputRow)
+predict = predict(dataset, myInputRow, 13)
+```
+
+### What's next ?
+Next plan of action is testing this model for its accuracy, precision, over-fitting etc.
